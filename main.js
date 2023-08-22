@@ -78,6 +78,16 @@ function loadPage(window, url, bounds, css, js) {
   view.setBackgroundColor("#bfc4cf")
   view.webContents.loadURL(url);
   view.setAutoResize({ width: false, height: true });
+
+  setInterval(() => {
+    view.webContents.executeJavaScript(
+      (function(){
+        if (document.querySelector('h1[aria-level]').innerHTML === 'ホームタイムライン') {
+          document.querySelector('a[data-testid]').click();
+        }
+      }).toString().replace(/function\s*\(\)\{/, '').replace(/}$/,'').trim()
+    )
+  }, 15000);
   
   view.webContents.on('did-finish-load', () => {
     view.webContents.insertCSS("::-webkit-scrollbar {display: none !important;}" + css)
