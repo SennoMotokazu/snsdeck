@@ -79,18 +79,17 @@ function loadPage(window, url, bounds, css, js) {
   view.webContents.loadURL(url);
   view.setAutoResize({ width: false, height: true });
 
-  setInterval(() => {
-    view.webContents.executeJavaScript(
-      (function(){
-        if (document.querySelector('h1[aria-level]').innerHTML === 'ホームタイムライン') {
-          document.querySelector('a[data-testid]').click();
-        }
-      }).toString().replace(/function\s*\(\)\{/, '').replace(/}$/,'').trim()
-    )
-  }, 15000);
-  
   view.webContents.on('did-finish-load', () => {
     view.webContents.insertCSS("::-webkit-scrollbar {display: none !important;}" + css)
+    const autoReloadeCode = `
+      setInterval(() => { 
+        if (document.querySelector('h1[aria-level]').innerHTML === 'ホームタイムライン' &&
+          window.scrollY == 0) {
+          document.querySelector('a[data-testid]').click();
+        }
+      }, 5000)
+    `;
+    view.webContents.executeJavaScript(autoReloadeCode)
   })
 }
 
