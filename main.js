@@ -1,4 +1,4 @@
-const { app, BrowserWindow, BrowserView, ipcMain } = require('electron')
+const { app, BrowserWindow, BrowserView, ipcMain, shell } = require('electron')
 const Store = require('electron-store')
 const store = new Store()
 
@@ -78,6 +78,13 @@ function loadPage(window, url, bounds, css, js) {
   view.setBackgroundColor("#bfc4cf")
   view.webContents.loadURL(url);
   view.setAutoResize({ width: false, height: true });
+
+  view.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('http')) {
+        shell.openExternal(url)
+    }
+    return { action: 'deny' }
+  })
 
   view.webContents.on('did-finish-load', () => {
     view.webContents.insertCSS("::-webkit-scrollbar {display: none !important;}" + css)
